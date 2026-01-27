@@ -224,7 +224,7 @@ export default function ChangePasswordScreen() {
         <View style={styles.securityRow}>
           {(
             [
-              { label: 'Rotate every 90 days', icon: 'clock-rotate-left' },
+              { label: 'Rotate every 90 days', icon: 'history' },
               { label: 'Enable MFA', icon: 'key-chain-variant' },
             ] as const
           ).map((hint) => (

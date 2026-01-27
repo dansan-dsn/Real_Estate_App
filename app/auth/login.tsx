@@ -13,6 +13,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { z } from 'zod';
 import { useThemeStore } from '@/stores/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
+import { authService } from '@/services/auth';
 
 const loginSchema = z.object({
   email: z
@@ -43,6 +44,7 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<
     Partial<Record<'email' | 'password', string>>
   >({});
+  const [loading, setLoading] = useState(false);
   const { colors } = useThemeStore();
   const router = useRouter();
 
@@ -66,7 +68,7 @@ export default function LoginScreen() {
     [formData]
   );
 
-  const handleSubmit = () => {
+  const handleLogin = async () => {
     const result = loginSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<'email' | 'password', string>> = {};
@@ -80,7 +82,28 @@ export default function LoginScreen() {
       return;
     }
 
-    Alert.alert('Welcome back', 'Authentication is ready once APIs are wired.');
+    setLoading(true);
+    try {
+      const authResponse = await authService.login({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      Alert.alert(
+        'Welcome back!',
+        `Successfully logged in as ${authResponse.user.firstName} ${authResponse.user.lastName}`,
+        [
+          {
+            text: 'Continue',
+            onPress: () => router.replace('/'),
+          },
+        ]
+      );
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -188,8 +211,9 @@ export default function LoginScreen() {
             },
           ]}
           textColor={formIsValid ? colors.white : colors.textSecondary}
-          disabled={!formIsValid}
-          onPress={handleSubmit}
+          disabled={!formIsValid || loading}
+          loading={loading}
+          onPress={handleLogin}
         >
           Sign in
         </Button>

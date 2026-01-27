@@ -7,6 +7,7 @@ import { useThemeStore } from '@/stores/useTheme';
 import { useFavoriteStore } from '@/stores/favorites';
 import { useSnackbar } from '@/stores/snackbar';
 import PropertyCardHorizontal from '@/components/blocks/property/PropertyCardHorizontal';
+import ConnectionTest from '@/components/ConnectionTest';
 
 const Favorite = () => {
   const flatListRef = useRef<FlatList>(null);
@@ -90,6 +91,7 @@ const Favorite = () => {
           </View>
         }
       />
+      <ConnectionTest />
     </View>
   );
 };
